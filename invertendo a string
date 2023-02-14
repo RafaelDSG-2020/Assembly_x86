@@ -1,0 +1,22 @@
+%include "io.inc"
+
+section .data
+vet1 db 0,'teste de string'
+svet1 EQU $-vet1
+
+section .bss
+vet2 resb 20
+
+
+section .text
+global CMAIN
+CMAIN:
+    mov ecx, svet1
+    dec ecx
+    mov edi, 0
+l1:
+    PRINT_CHAR [vet1+ecx]
+    inc edi
+    loop l1    
+    xor eax, eax
+    ret

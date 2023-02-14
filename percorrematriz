@@ -1,0 +1,79 @@
+%include "io.inc"
+
+section .data
+msg db "%c", 0
+novalinha db 0Dh, 0Ah, 0
+
+
+
+section .bss
+matriz  RESB 5
+tlinha EQU $-matriz
+qcolunas EQU tlinha/1
+        RESB 5
+        RESB 5
+        RESB 5
+        RESB 5
+tmatriz EQU $-matriz
+qlinhas EQU tmatriz/tlinha
+
+;xxxxx
+;x000x
+;x000x
+;x000x
+;xxxxx 
+                               
+section .text
+global CMAIN
+CMAIN:
+    mov ebp, esp; for correct debugging
+    
+    
+    mov ecx, qlinhas
+    mov esi, 0   ;edi indexa linha
+    l1:
+    mov BYTE[matriz+esi], 'x'
+    mov BYTE[matriz+4*tlinha+esi], 'x'
+    mov BYTE[matriz+esi*tlinha+0], 'x'
+    mov BYTE[matriz+esi*tlinha+4], 'x'
+    inc esi
+    loop l1
+    mov ecx, 3
+    l2:
+    mov BYTE[matriz+1*tlinha+ecx], '0'
+    mov BYTE[matriz+2*tlinha+ecx], '0'
+    mov BYTE[matriz+3*tlinha+ecx], '0'
+    loop l2
+    
+    
+    mov ecx, qlinhas
+    mov edi, 0   ;edi indexa linha
+    lacoexterno:
+    push ecx
+    mov ecx, qcolunas
+    mov esi, 0     ; esi indexa coluna
+    mov eax, 0
+    lacointerno:
+        mov eax, tlinha
+        mul edi
+        add eax, esi
+        add eax, matriz  
+ 
+        pushad
+        movzx edx, BYTE[eax]
+        push edx
+        push msg
+        call printf
+        add esp, 8
+        popad
+        inc esi
+        loop lacointerno
+    
+    inc edi
+    push novalinha
+    call printf
+    add esp, 4
+    pop ecx
+    loop lacoexterno
+        
+    xor eax, eax
